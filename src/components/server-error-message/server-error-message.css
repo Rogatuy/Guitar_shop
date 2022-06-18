@@ -1,0 +1,12 @@
+.server-error-message {
+  position: fixed;
+  top: 20%;
+  right: 30%;
+  left: 30%;
+  padding: 20px;
+  background-color: #a0385c;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  z-index: 2;
+}
