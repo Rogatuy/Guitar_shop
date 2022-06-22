@@ -1,4 +1,4 @@
-import { MAX_RATING, ratingToText} from '../const';
+import { ratingToText} from '../const';
 import { Comments } from '../types/comments';
 
 
@@ -27,19 +27,6 @@ export const convertTypeGuitarToText = ( typeGuitar: string) => {
     case 'ukulele' :
       return 'Укулеле';
   }
-};
-
-export const getRatingAttributes = ( rating: number) => {
-  const ratingAttributes = [];
-  ratingAttributes.length = MAX_RATING;
-  for (let i = 0; i < ratingAttributes.length; i++) {
-    if ( i < rating) {
-      ratingAttributes[i] = true;
-    } else {
-      ratingAttributes[i] = false;
-    }
-  }
-  return ratingAttributes;
 };
 
 export const getSortComment = (comments: Comments) => comments.slice().sort((a, b) => Date.parse(b.createAt) - Date.parse(a.createAt));

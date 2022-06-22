@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import FormSearch from '../../pages/main/components/form-search/form-search';
+import FormSearch from '../main/components/form-search/form-search';
 import Logo from '../logo/logo';
 import UserNavigation from '../user-navigation/user-navigation';
 

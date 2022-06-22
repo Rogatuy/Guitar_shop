@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../../../const';
-import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 import { addCommentOnSever } from '../../../../store/api-actions';
 import { reviewSendStatus } from '../../../../store/review-send-status/review-send-status';
 import { getReviewSendStatus } from '../../../../store/review-send-status/selectors';
