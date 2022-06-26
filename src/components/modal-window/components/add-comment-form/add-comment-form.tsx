@@ -1,7 +1,6 @@
 import  './add-comment-form.css';
-import classNames from 'classnames';
 
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { FormEvent,useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../../../const';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
@@ -26,8 +25,15 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
   const [disadvantage, setDisadvantage] = useState<string>('');
   const [comment, setComment] = useState<string>('');
   const [starRating, setStarRating] = useState<number>(0);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isSending, setIsSending] = useState<boolean>(false);
+
+  const [isRatingWarning, setIsRatingWarning] = useState(false);
+  const [isUserNameWarning, setIsUserNameWarning] = useState(false);
+  const [isAdvantageWarning, setIsAdvantageWarning] = useState(false);
+  const [isDisadvantageWarning, setIsDisadvantageWarning] = useState(false);
+  const [isCommentWarning, setIsCommentWarning] = useState(false);
+
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -39,13 +45,13 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
     dispatch(reviewSendStatus('initial'));
   }, [dispatch]);
 
-  const handleCheckIsDisabled = useCallback((() => {
-    setIsDisabled(comment === '' || userName === '' || advantage === '' || disadvantage === '' || starRating === 0);
-  }), [advantage, comment, disadvantage, starRating, userName]);
-
   useEffect(() => {
-    handleCheckIsDisabled();
-  }, [handleCheckIsDisabled]);
+    if (!starRating || !userName || !advantage || !disadvantage || !comment) {
+      setIsFormValid(false);
+    } else {
+      setIsFormValid(true);
+    }
+  }, [starRating, userName, advantage, disadvantage, comment]);
 
   useEffect (() => {
     if (isSending && sendStatus === 'initial') {
@@ -57,7 +63,37 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
   const handleFormSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (!isDisabled) {
+    if (!starRating) {
+      setIsRatingWarning(true);
+    } else {
+      setIsRatingWarning(false);
+    }
+
+    if (!userName) {
+      setIsUserNameWarning(true);
+    } else {
+      setIsUserNameWarning(false);
+    }
+
+    if (!advantage) {
+      setIsAdvantageWarning(true);
+    } else {
+      setIsAdvantageWarning(false);
+    }
+
+    if (!disadvantage) {
+      setIsDisadvantageWarning(true);
+    } else {
+      setIsDisadvantageWarning(false);
+    }
+
+    if (!comment) {
+      setIsCommentWarning(true);
+    } else {
+      setIsCommentWarning(false);
+    }
+
+    if (isFormValid) {
       const currentId = String(Math.random());
       const currentDate = String(dayjs());
       const currentComment = String(comment);
@@ -73,7 +109,7 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
     >
       <div className="form-review__wrapper">
         <div className="form-review__name-wrapper">
-          <label className={classNames('form-review__label', {'form-review__label--required' : (userName === '')})} htmlFor="user-name">Ваше Имя</label>
+          <label className="form-review__label form-review__label--required" htmlFor="user-name">Ваше Имя</label>
           <input
             className="form-review__input form-review__input--name"
             id="user-name"
@@ -82,9 +118,12 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
             value={userName}
             onChange={(event) => setUserName(event.target.value)}
           />
-          {(userName === '') ? <p className="form-review__warning">Заполните поле</p> : ''}
+          <p className="form-review__warning" style={isUserNameWarning ? {} : {visibility: 'hidden'}} >
+            Заполните поле
+          </p>
         </div>
-        <div><span className={classNames('form-review__label', {'form-review__label--required' : starRating === 0})}>Ваша Оценка</span>
+        <div>
+          <span className="form-review__label form-review__label--required">Ваша Оценка</span>
           <div className="rate rate--reverse">
             <input className="visually-hidden" id="star-5" name="rate" type="radio" value="5" onChange={(event) => setStarRating(Number(event.target.value))}/>
             <label className="rate__label" htmlFor="star-5" title="Отлично"></label>
@@ -96,11 +135,13 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
             <label className="rate__label" htmlFor="star-2" title="Плохо"></label>
             <input className="visually-hidden" id="star-1" name="rate" type="radio" value="1" onChange={(event) => setStarRating(Number(event.target.value))}/>
             <label className="rate__label" htmlFor="star-1" title="Ужасно"></label>
-            {(starRating === 0) ? <p className="rate__message">Поставьте оценку</p> : ''}
+            <p className="rate__message" style={isRatingWarning ? {} : {visibility: 'hidden'}}>
+              Поставьте оценку
+            </p>
           </div>
         </div>
       </div>
-      <label className={classNames('form-review__label', {'form-review__label--required' : (advantage === '')})} htmlFor="adv">Достоинства</label>
+      <label className="form-review__label form-review__label--required" htmlFor="adv">Достоинства</label>
       <input
         className="form-review__input"
         id="adv"
@@ -109,8 +150,10 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
         value={advantage}
         onChange={(event) => setAdvantage(event.target.value)}
       />
-      {(advantage === '') ? <p className="form-review__warning">Заполните поле</p> : ''}
-      <label className={classNames('form-review__label', {'form-review__label--required' : (disadvantage === '')})} htmlFor="disadv">Недостатки</label>
+      <p className="form-review__warning" style={isAdvantageWarning ? {} : {visibility: 'hidden'}}>
+        Заполните поле
+      </p>
+      <label className="form-review__label form-review__label--required" htmlFor="disadv">Недостатки</label>
       <input
         className="form-review__input"
         id="disadv"
@@ -119,8 +162,10 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
         value={disadvantage}
         onChange={(event) => setDisadvantage(event.target.value)}
       />
-      {(disadvantage === '') ? <p className="form-review__warning">Заполните поле</p> : ''}
-      <label className={classNames('form-review__label', {'form-review__label--required' : (comment === '')})} htmlFor="comment">Комментарий</label>
+      <p className="form-review__warning" style={isDisadvantageWarning ? {} : {visibility: 'hidden'}}>
+        Заполните поле
+      </p>
+      <label className="form-review__label form-review__label--required" htmlFor="comment">Комментарий</label>
       <textarea
         className="form-review__input form-review__input--textarea"
         id="comment"
@@ -129,17 +174,17 @@ function AddCommentForm({guitar, modalTypeActive, setModalTypeActive}: AddCommen
         onChange={(event) => setComment(event.target.value)}
       >
       </textarea>
-      {(comment === '') ? <p className="form-review__warning">Заполните поле</p> : ''}
+      <p className="form-review__warning" style={isCommentWarning ? {} : {visibility: 'hidden'}}>
+        Заполните поле
+      </p>
       <button
-        className={`button button--medium-20 form-review__button ${isDisabled ? ' add-review__form-disabled' : ''}`}
+        className="button button--medium-20 form-review__button"
         type="submit"
-        disabled={isDisabled}
       >
           Отправить отзыв
       </button>
       {sendStatus === 'error' && <span>Oops, something went wrong while submitting your review! Try later!</span>}
     </form>
-
   );
 }
 

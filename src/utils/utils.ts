@@ -40,3 +40,11 @@ export const scrollOnTop = () => {
 
 export const isNumber = (value: string | number ): boolean =>
   ((value !== null) && !isNaN(Number(value.toString())) && (value !== undefined));
+
+export const validateString = (text: string): string => {
+  let result = text.replace(/\s+/g, ' ');
+  if (result === ' ') {
+    result = '';
+  }
+  return result;
+};
