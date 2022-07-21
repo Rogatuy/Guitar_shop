@@ -2,8 +2,8 @@ import { Action } from 'redux';
 import MockAdapter from 'axios-mock-adapter';
 import { configureMockStore } from '@jedmao/redux-mock-store';
 
-import { addCommentOnSever, fetchCommentsAction, fetchFullGuitarAction, fetchGuitarsAction } from './api-actions';
-import { loadGuitars } from './guitars-data/guitars-data';
+import { addCommentOnSever, fetchCommentsAction, fetchFullGuitarAction, fetchGuitarsAction, fetchMinPriceGuitarAction, fetchSortedGuitarsAction } from './api-actions';
+import { loadGuitars, loadSortedGuitars } from './guitars-data/guitars-data';
 import { createApi } from '../services/api';
 import { State } from '../types/state';
 import { APIRoute } from '../const';
@@ -12,6 +12,7 @@ import thunk, { ThunkDispatch } from 'redux-thunk';
 import { loadGuitarFull } from './guitar-full-data/guitar-full-data';
 import { loadComments } from './comments-data/comments-data';
 import { reviewSendStatus } from './review-send-status/review-send-status';
+import { loadMinPriceGuitar } from './main-filter/main-filter';
 
 describe('Async actions', () => {
   const api = createApi();
@@ -52,6 +53,34 @@ describe('Async actions', () => {
     expect(actions).toContain(loadGuitarFull.toString());
   });
 
+  it('should dispatch Load_Guitars_Sorted when GET /guitars?{search}', async () => {
+    const mockGuitars = makeFakeGuitars();
+
+    mockAPI
+      .onGet(APIRoute.Guitars)
+      .reply(200, mockGuitars);
+
+    const store = mockStore();
+    await store.dispatch(fetchSortedGuitarsAction(''));
+    const actions = store.getActions().map(({type}) => type);
+
+    expect(actions).toContain(loadSortedGuitars.toString());
+  });
+
+  it('should dispatch Load_Min_Price_Guitar when GET /guitars?{search}&_limit=1', async () => {
+    const mockGuitar = makeFakeGuitar();
+
+    mockAPI
+      .onGet(`${APIRoute.Guitars}&_limit=1`)
+      .reply(200, mockGuitar);
+
+    const store = mockStore();
+    await store.dispatch(fetchMinPriceGuitarAction(''));
+    const actions = store.getActions().map(({type}) => type);
+
+    expect(actions).toContain(loadMinPriceGuitar.toString());
+  });
+
   it('should dispatch Load_Comments when GET /guitars/id/comments', async () => {
     const mockComment = makeFakeComment();
 
@@ -79,4 +108,6 @@ describe('Async actions', () => {
 
     expect(actions).toContain(reviewSendStatus.toString());
   });
+
+
 });

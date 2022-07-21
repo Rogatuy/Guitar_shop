@@ -21,7 +21,6 @@ export enum AppRoute {
     MainFirstPage = '/page_1',
     Guitar = '/guitars/',
     NoFoundScreen = '/*',
-    Catalog = 'catalog/',
     Characteristics = '/characteristics',
     Description = '/description',
     Lose = '/lose',
@@ -40,6 +39,9 @@ export enum NameSpace {
     SelectedPagination = 'SELECTED_PAGINATION',
     PostUserComment = 'POST_USER_COMMENT',
     ReviewSendStatus = 'REVIEW_SEND_STATUS',
+    MainSort = 'MAIN_SORT',
+    MainFilter = 'MAIN_FILTER',
+    MainSearch = 'MAIN_SEARCH',
   }
 
 export enum APIRoute {
@@ -53,4 +55,34 @@ export enum tabTranscription {
   description = 'Описание',
 }
 
+export enum SortType {
+  Default = 'default',
+  Price = 'price',
+  Rating = 'rating',
+}
 
+export enum SortOrder {
+  Default = 'default',
+  Up = 'asc',
+  Down = 'desc',
+}
+
+export enum GuitarType {
+  Acoustic = 'acoustic',
+  Electric = 'electric',
+  Ukulele = 'ukulele',
+}
+
+export const stringCountByType = {
+  Default: ['4', '6', '7', '12'],
+  Acoustic: ['6', '7', '12'],
+  Electric: ['4', '6', '7'],
+  Ukulele: ['4'],
+};
+
+export const disabledStringCountByType = {
+  Default: [],
+  Acoustic: ['4'],
+  Electric: ['12'],
+  Ukulele: ['6', '7', '12'],
+};

@@ -1,7 +1,6 @@
 import { Guitar, Guitars } from '../types/guitar';
 import { Comments, Comment } from '../types/comments';
 
-
 export const makeFakeComment = () : Comment => (
   {
     userName: 'Vovo',
@@ -296,3 +295,4 @@ export const makeFakeModalProps = (active: boolean, modalTypeActive: boolean, gu
     guitar: makeFakeGuitar(),
   }
 );
+

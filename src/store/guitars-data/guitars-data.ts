@@ -15,7 +15,19 @@ export const guitarsData = createSlice({
       state.guitars = action.payload;
       state.isDataLoaded = true;
     },
+    resetIsDataLoaded: (state) => {
+      state.isDataLoaded = false;
+    },
+    loadSortedGuitars: (state, action) => {
+      state.guitars = action.payload;
+      if (action.payload.length > 0) {
+        state.isDataLoaded = true;
+      }
+    },
+    deleteAllGuitars: (state) => {
+      state.guitars = [];
+    },
   },
 });
 
-export const {loadGuitars} = guitarsData.actions;
+export const {loadGuitars, resetIsDataLoaded, loadSortedGuitars, deleteAllGuitars} = guitarsData.actions;

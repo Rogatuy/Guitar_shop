@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { createApi } from '../../services/api';
 import { State } from '../../types/state';
-import { makeFakeComments, makeFakeGuitar } from '../../utils/mocks';
+import { makeFakeComments, makeFakeGuitar, makeFakeGuitars } from '../../utils/mocks';
 import GuitarFull from './guitar-full';
 
 const api = createApi();
@@ -17,6 +17,9 @@ const store = mockStore({
   GUITAR_FULL_DATA:  {
     guitarFull: makeFakeGuitar(),
     isDataLoaded: true,
+  },
+  MAIN_SEARCH: {
+    guitarsBySearch: makeFakeGuitars(),
   },
   COMMENTS_DATA : {
     comments: makeFakeComments(),

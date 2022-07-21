@@ -1,17 +1,46 @@
 import { render,screen } from '@testing-library/react';
-import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { BrowserRouter } from 'react-router-dom';
 
 import Filter from './filter';
+import { configureMockStore } from '@jedmao/redux-mock-store';
+import { Provider } from 'react-redux';
+import { SortType, SortOrder } from '../../../../const';
+import { makeFakeGuitars } from '../../../../utils/mocks';
 
-describe('Component: Header', () => {
+const mockStore = configureMockStore();
+
+const store = mockStore({
+
+  MAIN_SEARCH: {
+    guitarsBySearch: makeFakeGuitars(),
+  },
+  MAIN_FILTER: {
+    guitarsTypes: [],
+    priceSearch: {
+      min: null,
+      max: null,
+    },
+    stringCount: [],
+  },
+  MAIN_SORT: {
+    sortingType: SortType.Default,
+    sortingOrder: SortOrder.Default,
+  },
+  GUITARS_DATA : {
+    guitars: makeFakeGuitars(),
+    isDataLoaded: true,
+  },
+});
+
+describe('Component: Filter', () => {
   it('should render correctly', () => {
-    const customHistory = createMemoryHistory();
 
     render (
-      <HistoryRouter history={customHistory}>
-        <Filter />
-      </HistoryRouter>,
+      <Provider store={store}>
+        <BrowserRouter>
+          <Filter/>
+        </BrowserRouter>
+      </Provider>,
     );
 
     const filter = screen.getByText('Фильтр');

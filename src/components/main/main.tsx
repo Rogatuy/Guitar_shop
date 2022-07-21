@@ -7,11 +7,15 @@ import Icons from '../icons/icons';
 import Sort from './components/sort/sort';
 import { getGuitarsList } from '../../store/guitars-data/selectors';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { changePagination } from '../../store/selected-pagination/selected-pagination';
-import { GUITAR_STEP, ZERO } from '../../const';
+import { GUITAR_STEP, SortOrder, SortType, ZERO } from '../../const';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
-import { isNumber } from '../../utils/utils';
+import { createSearchQuery, isNumber } from '../../utils/utils';
+import { getPriceFilters, getStringFilters, getTypeFilters } from '../../store/main-filter/selectors';
+import { getSortParams } from '../../store/main-sort/selectors';
+import { useEffect} from 'react';
+import { fetchMaxPriceGuitarAction, fetchMinPriceGuitarAction, fetchSortedGuitarsAction} from '../../store/api-actions';
 
 
 function Main(): JSX.Element {
@@ -22,7 +26,41 @@ function Main(): JSX.Element {
   const dispatch = useAppDispatch();
   dispatch(changePagination(pagination));
 
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const typeFilters = useAppSelector(getTypeFilters);
+  const priceFilters = useAppSelector(getPriceFilters);
+  const sortingParams = useAppSelector(getSortParams);
+  const stringCountFilters = useAppSelector(getStringFilters);
+
+  const searchQuery = createSearchQuery(typeFilters, priceFilters, stringCountFilters, sortingParams);
+
+  const minPriceGuitarSearchQuery = createSearchQuery(
+    typeFilters,
+    {min: null, max: null},
+    stringCountFilters,
+    {sortType: SortType.Price, sortOrder: SortOrder.Up},
+  );
+
+  const maxPriceGuitarSearchQuery = createSearchQuery(
+    typeFilters,
+    {min: null, max: null},
+    stringCountFilters,
+    {sortType: SortType.Price, sortOrder: SortOrder.Down},
+  );
+
+  useEffect(() => {
+
+    navigate(`${location.pathname}?${searchQuery.slice(1)}`);
+    if (searchQuery) {
+      dispatch(fetchSortedGuitarsAction(`${searchQuery}`));
+    }
+    dispatch(fetchMinPriceGuitarAction(`${minPriceGuitarSearchQuery}`));
+    dispatch(fetchMaxPriceGuitarAction(`${maxPriceGuitarSearchQuery}`));
+  }, [dispatch, maxPriceGuitarSearchQuery, minPriceGuitarSearchQuery, searchQuery, navigate, location.pathname]);
+
+  // настройка пагинации
   const maxPagesPagination = Math.ceil(guitars.length / GUITAR_STEP);
 
   if (idPag !== undefined ) {
@@ -42,10 +80,8 @@ function Main(): JSX.Element {
           <Breadcrumbs/>
           <div className="catalog">
             <Filter/>
-            <GuitarsList
-              guitars={guitars}
-            />
             <Sort/>
+            <GuitarsList guitars={guitars}/>
           </div>
         </div>
       </main>
@@ -55,3 +91,5 @@ function Main(): JSX.Element {
 }
 
 export default Main;
+
+

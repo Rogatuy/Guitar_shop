@@ -5,10 +5,12 @@ import { CommentPostServer, Comments } from '../types/comments';
 import { Guitar, Guitars } from '../types/guitar';
 import { loadComments, toggleLoaderComments } from './comments-data/comments-data';
 import { loadGuitarFull, toggleLoaderGuitarFull } from './guitar-full-data/guitar-full-data';
-import { loadGuitars } from './guitars-data/guitars-data';
+import { loadGuitars, loadSortedGuitars } from './guitars-data/guitars-data';
 import { reviewSendStatus } from './review-send-status/review-send-status';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
+import { loadMaxPriceGuitar, loadMinPriceGuitar } from './main-filter/main-filter';
+import { loadGuitarsBySearch } from './main-search/main-search';
 
 
 export const fetchGuitarsAction = createAsyncThunk<void, undefined, {
@@ -41,6 +43,54 @@ export const fetchFullGuitarAction = createAsyncThunk<void, number, {
       errorHandle(error);
       dispatch(toggleLoaderGuitarFull());
     }
+  },
+);
+
+export const fetchSortedGuitarsAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'data/fetchSortedGuitars',
+  async (search, {dispatch, extra: api}) => {
+    const {data} = await api.get<Guitars>(`${APIRoute.Guitars}${search}`);
+    dispatch(loadSortedGuitars(data));
+  },
+);
+
+export const fetchMinPriceGuitarAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'filter/fetchMinPriceGuitar',
+  async (search, {dispatch, extra: api}) => {
+    const {data} = await api.get<Guitars>(`${APIRoute.Guitars}${search}&_limit=1`);
+    dispatch(loadMinPriceGuitar(data));
+  },
+);
+
+export const fetchMaxPriceGuitarAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'filter/fetchMinPriceGuitar',
+  async (search, {dispatch, extra: api}) => {
+    const {data} = await api.get<Guitars>(`${APIRoute.Guitars}${search}&_limit=1`);
+    dispatch(loadMaxPriceGuitar(data));
+  },
+);
+
+export const fetchGuitarsBySearchAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'data/fetchGuitarsBySearch',
+  async (name, {dispatch, extra: api}) => {
+    const {data} = await api.get<Guitars>(`${APIRoute.Guitars}&name_like=${name}`);
+    dispatch(loadGuitarsBySearch(data));
   },
 );
 
